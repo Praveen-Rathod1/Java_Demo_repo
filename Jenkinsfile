@@ -28,11 +28,10 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-
-                dir('webapp') {
-                    sh 'mvn clean package -DskipTests'
-                }
+    steps {
+        sh 'mvn clean package -DskipTests'
+    }
+}
 
                 script {
 
