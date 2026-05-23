@@ -42,7 +42,7 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no \
                         ${SERVER_USER}@${params.SERVER_IP} '
 
-                            sudo rm -rf ${TOMCAT_DIR}/Java_demo_repo *
+                            sudo rm -rf ${TOMCAT_DIR}/java-demo-project *
 
                             sudo mv /tmp/${WAR_NAME} ${TOMCAT_DIR}/
 
