@@ -10,11 +10,7 @@ pipeline {
 
         stage('Maven Build') {
             steps {
-
                 sh '''
-                    pwd
-                    ls -la
-
                     mvn clean package -DskipTests
 
                     sudo rm -rf /opt/tomcat/webapps/tomcat-demo
@@ -27,7 +23,6 @@ pipeline {
 
         stage('Restart Tomcat Service') {
             steps {
-
                 sh '''
                     sudo systemctl restart tomcat
                     sudo systemctl status tomcat --no-pager
