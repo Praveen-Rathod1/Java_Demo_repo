@@ -10,17 +10,17 @@ pipeline {
 
         stage('Maven Build') {
             steps {
-                dir('java-demo-project') {
+                sh '''
+                    pwd
+                    find . -name pom.xml
 
-                    sh '''
-                        mvn clean package -DskipTests
+                    mvn clean package -DskipTests
 
-                        sudo rm -rf /opt/tomcat/webapps/tomcat-demo
-                        sudo rm -rf /opt/tomcat/webapps/tomcat-demo.war
+                    sudo rm -rf /opt/tomcat/webapps/tomcat-demo
+                    sudo rm -rf /opt/tomcat/webapps/tomcat-demo.war
 
-                        sudo cp target/tomcat-demo.war /opt/tomcat/webapps/
-                    '''
-                }
+                    sudo cp target/tomcat-demo.war /opt/tomcat/webapps/
+                '''
             }
         }
 
@@ -28,6 +28,7 @@ pipeline {
             steps {
                 sh '''
                     sudo systemctl restart tomcat
+                    sudo systemctl status tomcat --no-pager
                 '''
             }
         }
