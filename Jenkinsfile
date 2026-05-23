@@ -5,10 +5,9 @@ pipeline {
         maven 'maven3'
         jdk 'jdk17'
     }
-    
+
     environment {
-		SERVER_USER = 'ubuntu'
-        TOMCAT_DIR = '/opt/tomcat/webapps'
+        WAR_NAME = 'tomcat-demo.war'
     }
 
     stages {
@@ -19,44 +18,20 @@ pipeline {
                     mvn clean package -DskipTests
 
                     sudo rm -rf /opt/tomcat/webapps/tomcat-demo
-                    sudo rm -rf /opt/tomcat/webapps/tomcat-demo.war
+                    sudo rm -rf /opt/tomcat/webapps/${WAR_NAME}
 
-                    sudo cp target/*.war /opt/tomcat/webapps/
+                    sudo cp target/${WAR_NAME} /opt/tomcat/webapps/
                 '''
             }
         }
 
         stage('Deploy to Tomcat') {
             steps {
-
-                sshagent(credentials: ['tomcat-ssh-key']) {
-
-                    sh """
-                        set -e
-
-                        echo "Deploying WAR: ${WAR_NAME}"
-
-                        scp -o StrictHostKeyChecking=no \
-                        ${WAR_FILE} ${SERVER_USER}@${params.SERVER_IP}:/tmp/
-
-                        ssh -o StrictHostKeyChecking=no \
-                        ${SERVER_USER}@${params.SERVER_IP} '
-
-                            sudo rm -rf ${TOMCAT_DIR}/java-demo-project *
-
-                            sudo mv /tmp/${WAR_NAME} ${TOMCAT_DIR}/
-
-                            sudo systemctl restart tomcat
-
-                            sleep 10
-
-                            sudo systemctl status tomcat --no-pager
-                        '
-
-                        echo "Deployment completed successfully!"
-                    """
+                sh '''
+                    sudo systemctl restart tomcat
+                    sudo systemctl status tomcat --no-pager
+                '''
             }
         }
     }
-}
 }
