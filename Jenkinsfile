@@ -2,27 +2,37 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk17'
         maven 'maven3'
+        jdk 'jdk17'
     }
 
     stages {
 
-        stage('Check Files') {
+        stage('Maven Build') {
             steps {
+
                 sh '''
-                pwd
-                ls -la
-                find . -name pom.xml
+                    pwd
+                    ls -la
+
+                    mvn clean package -DskipTests
+
+                    sudo rm -rf /opt/tomcat/webapps/tomcat-demo
+                    sudo rm -rf /opt/tomcat/webapps/tomcat-demo.war
+
+                    sudo cp target/*.war /opt/tomcat/webapps/
                 '''
             }
         }
 
-        stage('Build') {
+        stage('Restart Tomcat Service') {
             steps {
-                sh 'mvn clean package -DskipTests'
+
+                sh '''
+                    sudo systemctl restart tomcat
+                    sudo systemctl status tomcat --no-pager
+                '''
             }
         }
-
     }
 }
