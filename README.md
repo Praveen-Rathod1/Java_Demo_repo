@@ -1,2 +1,2 @@
-# Java_Demo_repo
+# java-demo-project
 this repo creted to run java project
